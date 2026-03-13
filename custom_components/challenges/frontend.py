@@ -13,7 +13,7 @@ from homeassistant.helpers.event import async_call_later  # type: ignore[reportM
 _LOGGER = logging.getLogger(__name__)
 
 # The JS file shipped with this integration under ./www/
-JS_FILENAME = "chores4kids-card.js"
+JS_FILENAME = "challenges-card.js"
 
 # Where Home Assistant serves files from config/www/ as /local/
 RESOURCE_URL = f"/local/{JS_FILENAME}"
