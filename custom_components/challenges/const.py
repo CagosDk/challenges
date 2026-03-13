@@ -1,4 +1,4 @@
-DOMAIN = "chores4kids"
+DOMAIN = "challenges"
 PLATFORMS = ["sensor"]
 STORAGE_KEY = DOMAIN
 STORAGE_VERSION = 1
