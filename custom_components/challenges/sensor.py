@@ -9,15 +9,15 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN, SIGNAL_CHILDREN_UPDATED, SIGNAL_DATA_UPDATED
-from .storage import KidsChoresStore
+from .storage import ChallengesStore
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback):
-    store: KidsChoresStore = hass.data[DOMAIN]["store"]
+    store: ChallengesStore = hass.data[DOMAIN]["store"]
 
-    entities: dict[str, KidsChoresPointsSensor] = {}
-    all_tasks_sensor: Chores4KidsAllTasksSensor | None = None
-    shop_sensor: Chores4KidsShopSensor | None = None
-    ui_sensor: Chores4KidsUiSensor | None = None
+    entities: dict[str, ChallengesPointsSensor] = {}
+    all_tasks_sensor: challengesAllTasksSensor | None = None
+    shop_sensor: challengesShopSensor | None = None
+    ui_sensor: CchallengesUiSensor | None = None
 
     async def _cleanup_removed_entities(removed_ids: set[str]):
         registry = er.async_get(hass)
@@ -47,24 +47,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         for ch in store.children:
             key = ch.id
             if key not in entities:
-                ent = KidsChoresPointsSensor(store, ch.id)
+                ent = ChallengesPointsSensor(store, ch.id)
                 entities[key] = ent
                 async_add_entities([ent])
         # Ensure global tasks sensor exists
         nonlocal all_tasks_sensor
         if all_tasks_sensor is None:
-            all_tasks_sensor = Chores4KidsAllTasksSensor(store)
+            all_tasks_sensor = ChallengesAllTasksSensor(store)
             async_add_entities([all_tasks_sensor])
         # Ensure shop sensor exists
         nonlocal shop_sensor
         if shop_sensor is None:
-            shop_sensor = Chores4KidsShopSensor(store)
+            shop_sensor = ChallengesShopSensor(store)
             async_add_entities([shop_sensor])
 
         # Ensure UI settings sensor exists
         nonlocal ui_sensor
         if ui_sensor is None:
-            ui_sensor = Chores4KidsUiSensor(store)
+            ui_sensor = ChallengesUiSensor(store)
             async_add_entities([ui_sensor])
         # Remove sensors for deleted children (runtime removal + registry/device cleanup)
         current_ids = {c.id for c in store.children}
