@@ -79,8 +79,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             if e.platform != "sensor":
                 continue
             uid = e.unique_id or ""
-            if uid.startswith("chores4kids_points_"):
-                suffix = uid.replace("chores4kids_points_", "")
+            if uid.startswith("challenges_points_"):
+                suffix = uid.replace("challenges_points_", "")
                 if suffix not in current_ids:
                     # remove entity and its device
                     device_id = e.device_id
@@ -119,12 +119,12 @@ class KidsChoresPointsSensor(SensorEntity):
         self._child_id = child_id
         ch = self._child
         # Use stable child id for unique_id so renames don't create orphan entities
-        self._attr_unique_id = f"chores4kids_points_{ch.id}"
-        self._attr_name = f"Chores4Kids Points {ch.name}"
+        self._attr_unique_id = f"challenges_points_{ch.id}"
+        self._attr_name = f"challenges Points {ch.name}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"child_{ch.id}")},
-            name=f"Chores4Kids – {ch.name}",
-            manufacturer="Chores4Kids",
+            name=f"challenges – {ch.name}",
+            manufacturer="challenges",
             model="Virtual Child",
         )
 
@@ -193,17 +193,17 @@ class KidsChoresPointsSensor(SensorEntity):
         }
 
 
-class Chores4KidsAllTasksSensor(SensorEntity):
+class challengesAllTasksSensor(SensorEntity):
     _attr_has_entity_name = True
-    _attr_name = "Chores4Kids Tasks"
-    _attr_unique_id = "chores4kids_tasks_all"
+    _attr_name = "challenges Tasks"
+    _attr_unique_id = "challenges_tasks_all"
 
     def __init__(self, store: KidsChoresStore):
         self._store = store
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, "tasks")},
-            name="Chores4Kids – Tasks",
-            manufacturer="Chores4Kids",
+            name="challenges – Tasks",
+            manufacturer="challenges",
             model="Task Index",
         )
 
@@ -269,17 +269,17 @@ class Chores4KidsAllTasksSensor(SensorEntity):
         return {"tasks": tasks, "categories": categories}
 
 
-class Chores4KidsUiSensor(SensorEntity):
+class challengesUiSensor(SensorEntity):
     _attr_has_entity_name = True
-    _attr_name = "Chores4Kids UI"
-    _attr_unique_id = "chores4kids_ui"
+    _attr_name = "challenges UI"
+    _attr_unique_id = "challenges_ui"
 
     def __init__(self, store: KidsChoresStore):
         self._store = store
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, "ui")},
-            name="Chores4Kids – UI",
-            manufacturer="Chores4Kids",
+            name="challenges – UI",
+            manufacturer="challenges",
             model="UI Settings",
         )
 
@@ -316,17 +316,17 @@ class Chores4KidsUiSensor(SensorEntity):
         }
 
 
-class Chores4KidsShopSensor(SensorEntity):
+class challengesShopSensor(SensorEntity):
     _attr_has_entity_name = True
-    _attr_name = "Chores4Kids Shop"
-    _attr_unique_id = "chores4kids_shop"
+    _attr_name = "challenges Shop"
+    _attr_unique_id = "challenges_shop"
 
     def __init__(self, store: KidsChoresStore):
         self._store = store
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, "shop")},
-            name="Chores4Kids – Shop",
-            manufacturer="Chores4Kids",
+            name="challenges – Shop",
+            manufacturer="challenges",
             model="Point Shop",
         )
 
