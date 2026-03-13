@@ -21,7 +21,7 @@ PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up the Chores4Kids integration."""
+    """Set up the challenges integration."""
     store = KidsChoresStore(hass)
     await store.async_load()
 
@@ -259,7 +259,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 child_name = None
 
             texts = _get_notify_texts()
-            title = "Chores4Kids"
+            title = "challenges"
             who = child_name or texts["child"]
             dt = _format_dt(dt_util.utcnow())
             message = str(texts["message"]).format(who=who, title=task.title, dt=dt)
@@ -270,7 +270,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 bonus_status = str(texts.get(bonus_status_key, "Bonus task completed" if bonus_status_key == "bonus_done" else "Bonus task not completed"))
                 bonus_line_tpl = str(texts.get("bonus_line", "{status}"))
                 message = f"{message}\n{bonus_line_tpl.format(label=bonus_label, status=bonus_status)}"
-            tag = f"chores4kids_task_done_{task_id}"
+            tag = f"challenges_task_done_{task_id}"
             data = {"tag": tag, "task_id": task_id}
 
             if not getattr(task, "skip_approval", False):
@@ -334,7 +334,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 return
 
             texts = _get_notify_texts()
-            title = "Chores4Kids"
+            title = "challenges"
             who = str(getattr(purchase, "child_name", "") or texts["child"])
             item = str(getattr(purchase, "title", "") or "")
             price = int(getattr(purchase, "price", 0) or 0)
@@ -342,7 +342,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             ts = dt_util.parse_datetime(str(ts_raw)) if ts_raw else None
             dt = _format_dt(ts or dt_util.utcnow())
             message = str(texts["purchase"]).format(who=who, item=item, price=price, dt=dt)
-            data = {"tag": "chores4kids_shop_purchase"}
+            data = {"tag": "challenges_shop_purchase"}
 
             for svc in targets:
                 domain = "notify"
@@ -400,8 +400,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                         or action_data.get("tag")
                         or ""
                     ).strip()
-                    if tag.startswith("chores4kids_task_done_"):
-                        task_id = tag.split("chores4kids_task_done_", 1)[1].strip()
+                    if tag.startswith("challenges_task_done_"):
+                        task_id = tag.split("challenges_task_done_", 1)[1].strip()
                 except Exception:
                     pass
 
@@ -664,10 +664,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Backwards/alias
     hass.services.async_register(DOMAIN, "reset_shop_history", svc_clear_shop_history)
 
-    # Upload images for shop items into /config/www/chores4kids
+    # Upload images for shop items into /config/www/challenges
     async def svc_upload_shop_image(call: ServiceCall):
         import os, base64, re
-        rel_dir = hass.config.path('www', 'chores4kids')
+        rel_dir = hass.config.path('www', 'challenges')
         os.makedirs(rel_dir, exist_ok=True)
         filename = call.data.get('filename') or 'upload.bin'
         # sanitize filename
@@ -689,12 +689,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.services.async_register(DOMAIN, 'upload_shop_image', svc_upload_shop_image)
 
     async def svc_delete_uploaded_file(call: ServiceCall):
-        """Delete a previously uploaded file from /config/www/chores4kids.
+        """Delete a previously uploaded file from /config/www/challenges.
 
         Safety: only allows deleting a single filename (no paths) after sanitization.
         """
         import os, re
-        rel_dir = hass.config.path('www', 'chores4kids')
+        rel_dir = hass.config.path('www', 'challenges')
         os.makedirs(rel_dir, exist_ok=True)
         filename = call.data.get('filename') or ''
         filename = re.sub(r'[^a-zA-Z0-9._-]+', '_', filename)
@@ -723,14 +723,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.services.async_register(DOMAIN, 'delete_uploaded_file', svc_delete_uploaded_file)
 
     async def svc_delete_completion_sound(call: ServiceCall):
-        """Delete completion sound files from /config/www/chores4kids.
+        """Delete completion sound files from /config/www/challenges.
 
         Deletes legacy and current filenames like:
         - completion.mp3 / completion.wav / completion.ogg / completion.m4a / completion.aac
         - completion_<timestamp>.<ext>
         """
         import os, re
-        rel_dir = hass.config.path('www', 'chores4kids')
+        rel_dir = hass.config.path('www', 'challenges')
         os.makedirs(rel_dir, exist_ok=True)
         pattern = re.compile(r'^completion(_\d+)?\.(mp3|wav|ogg|m4a|aac)$', re.IGNORECASE)
 
@@ -819,8 +819,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             if e.platform != Platform.SENSOR:
                 continue
             uid = e.unique_id or ""
-            if uid.startswith("chores4kids_points_"):
-                suffix = uid.replace("chores4kids_points_", "")
+            if uid.startswith("challenges_points_"):
+                suffix = uid.replace("challenges_points_", "")
                 # hvis suffix ikke er nuværende child_id, fjern entiteten
                 if suffix not in child_ids:
                     device_id = e.device_id
@@ -839,9 +839,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     desired = dev_registry.async_get_or_create(
                         config_entry_id=entry.entry_id,
                         identifiers={desired_ident},
-                        manufacturer="Chores4Kids",
+                        manufacturer="challenges",
                         model="Virtual Child",
-                        name=f"Chores4Kids – {suffix}",
+                        name=f"challenges – {suffix}",
                     )
                 if e.device_id != desired.id:
                     registry.async_update_entity(e.entity_id, device_id=desired.id)
