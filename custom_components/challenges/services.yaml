@@ -44,6 +44,10 @@ add_task:
       required: false
       description: "Title for bonus sub-task"
       example: "Rake the clippings"
+    bonus_description:
+      required: false
+      description: "Detailed description for the bonus sub-task"
+      example: "Do it outside the house and include a photo"
     bonus_points:
       required: false
       description: "Extra points for completing the bonus sub-task"
@@ -158,6 +162,10 @@ update_task:
       required: false
       description: "Title for bonus sub-task"
       example: "Rake the clippings"
+    bonus_description:
+      required: false
+      description: "Detailed description for the bonus sub-task"
+      example: "Do it outside the house and include a photo"
     bonus_points:
       required: false
       description: "Extra points for completing the bonus sub-task"

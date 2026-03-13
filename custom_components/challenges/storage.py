@@ -91,6 +91,7 @@ class Task:
     # Bonus task (sub-task)
     bonus_enabled: bool = False
     bonus_title: str = ""
+    bonus_description: str = ""
     bonus_points: int = 0
     bonus_completed_ts: Optional[int] = None
     bonus_approved: bool = False
@@ -451,6 +452,7 @@ class KidsChoresStore:
         early_bonus_points: Optional[int] = None,
         bonus_enabled: Optional[bool] = None,
         bonus_title: Optional[str] = None,
+        bonus_description: Optional[str] = None,
         bonus_points: Optional[int] = None,
         fastest_wins: Optional[bool] = None,
         fastest_wins_template_id: Optional[str] = None,
@@ -501,6 +503,8 @@ class KidsChoresStore:
             t.bonus_enabled = bool(bonus_enabled)
         if bonus_title is not None:
             t.bonus_title = str(bonus_title).strip()
+        if bonus_description is not None:
+            t.bonus_description = str(bonus_description).strip()
         if bonus_points is not None:
             try:
                 t.bonus_points = max(0, int(bonus_points))
@@ -513,6 +517,7 @@ class KidsChoresStore:
                 t.bonus_enabled = False
         if bonus_enabled is False:
             t.bonus_title = ""
+            t.bonus_description = ""
             t.bonus_points = 0
             t.bonus_completed_ts = None
             t.bonus_approved = False
@@ -754,6 +759,7 @@ class KidsChoresStore:
             inst.early_bonus_points = int(getattr(template, "early_bonus_points", 0) or 0)
             inst.bonus_enabled = bool(getattr(template, "bonus_enabled", False))
             inst.bonus_title = str(getattr(template, "bonus_title", "") or "").strip()
+            inst.bonus_description = str(getattr(template, "bonus_description", "") or "").strip()
             inst.bonus_points = int(getattr(template, "bonus_points", 0) or 0)
             self.tasks.append(inst)
 
@@ -794,6 +800,7 @@ class KidsChoresStore:
                 early_bonus_points=getattr(t, "early_bonus_points", 0),
                 bonus_enabled=getattr(t, "bonus_enabled", False),
                 bonus_title=getattr(t, "bonus_title", ""),
+                bonus_description=getattr(t, "bonus_description", ""),
                 bonus_points=getattr(t, "bonus_points", 0),
                 fastest_wins=bool(getattr(t, "fastest_wins", False)),
                 fastest_wins_template_id=(t.id if bool(getattr(t, "fastest_wins", False)) else None),
@@ -1125,6 +1132,7 @@ class KidsChoresStore:
                         inst.early_bonus_points = int(getattr(template, "early_bonus_points", 0) or 0)
                         inst.bonus_enabled = bool(getattr(template, "bonus_enabled", False))
                         inst.bonus_title = str(getattr(template, "bonus_title", "") or "").strip()
+                        inst.bonus_description = str(getattr(template, "bonus_description", "") or "").strip()
                         inst.bonus_points = int(getattr(template, "bonus_points", 0) or 0)
                         self.tasks.append(inst)
         except Exception:
@@ -1241,6 +1249,7 @@ class KidsChoresStore:
         early_bonus_points: Optional[int] = None,
         bonus_enabled: Optional[bool] = None,
         bonus_title: Optional[str] = None,
+        bonus_description: Optional[str] = None,
         bonus_points: Optional[int] = None,
         icon: Optional[str] = None,
         persist_until_completed: Optional[bool] = None,
@@ -1288,18 +1297,21 @@ class KidsChoresStore:
             t.bonus_enabled = bool(bonus_enabled)
         if bonus_title is not None:
             t.bonus_title = str(bonus_title).strip()
+        if bonus_description is not None:
+            t.bonus_description = str(bonus_description).strip()
         if bonus_points is not None:
             try:
                 t.bonus_points = max(0, int(bonus_points))
             except Exception:
                 t.bonus_points = getattr(t, "bonus_points", 0) or 0
-        if bonus_enabled is None and (bonus_title is not None or bonus_points is not None):
+        if bonus_enabled is None and (bonus_title is not None or bonus_description is not None or bonus_points is not None):
             try:
                 t.bonus_enabled = bool(str(getattr(t, "bonus_title", "") or "").strip() or int(getattr(t, "bonus_points", 0) or 0) > 0)
             except Exception:
                 pass
         if bonus_enabled is False:
             t.bonus_title = ""
+            t.bonus_description = ""
             t.bonus_points = 0
             t.bonus_completed_ts = None
             t.bonus_approved = False
@@ -1354,6 +1366,7 @@ class KidsChoresStore:
                     inst.early_bonus_points = int(getattr(t, "early_bonus_points", 0) or 0)
                     inst.bonus_enabled = bool(getattr(t, "bonus_enabled", False))
                     inst.bonus_title = str(getattr(t, "bonus_title", "") or "").strip()
+                    inst.bonus_description = str(getattr(t, "bonus_description", "") or "").strip()
                     inst.bonus_points = int(getattr(t, "bonus_points", 0) or 0)
                     inst.persist_until_completed = bool(getattr(t, "persist_until_completed", False))
                     inst.quick_complete = bool(getattr(t, "quick_complete", False))
@@ -1413,6 +1426,7 @@ class KidsChoresStore:
                 "early_bonus_points": getattr(t, "early_bonus_points", 0),
                 "bonus_enabled": getattr(t, "bonus_enabled", False),
                 "bonus_title": getattr(t, "bonus_title", ""),
+                "bonus_description": getattr(t, "bonus_description", ""),
                 "bonus_points": getattr(t, "bonus_points", 0),
                 "persist_until_completed": getattr(t, "persist_until_completed", False),
                 "quick_complete": getattr(t, "quick_complete", False),
@@ -1519,6 +1533,7 @@ class KidsChoresStore:
                             early_bonus_points=int(tpl.get("early_bonus_points", 0) or 0),
                             bonus_enabled=bool(tpl.get("bonus_enabled", False)),
                             bonus_title=str(tpl.get("bonus_title", "") or ""),
+                            bonus_description=str(tpl.get("bonus_description", "") or ""),
                             bonus_points=int(tpl.get("bonus_points", 0) or 0),
                             persist_until_completed=True,
                             quick_complete=tpl.get("quick_complete", False),
@@ -1567,6 +1582,7 @@ class KidsChoresStore:
                         early_bonus_points=tpl.get("early_bonus_points"),
                         bonus_enabled=tpl.get("bonus_enabled"),
                         bonus_title=tpl.get("bonus_title"),
+                        bonus_description=tpl.get("bonus_description"),
                         bonus_points=tpl.get("bonus_points"),
                         persist_until_completed=(tpl.get("persist_until_completed", False) if mode in ("", "repeat") else False),
                         quick_complete=tpl.get("quick_complete", False),
